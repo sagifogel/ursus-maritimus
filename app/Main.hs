@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import EventsHttpServer
 
 main :: IO ()
-main = someFunc
+main = httpService

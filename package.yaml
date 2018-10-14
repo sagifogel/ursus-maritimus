@@ -1,7 +1,7 @@
 name:                ursus-maritimus
 version:             0.1.0.0
 github:              "sagifogel/ursus-maritimus"
-license:             MIT
+license:             BSD3
 author:              "Sagi Fogel"
 maintainer:          "sagi.fogel@gmail.com"
 copyright:           "2018 Sagi Fogel"
@@ -21,6 +21,8 @@ description:         Haskell port of the scala ursus-martimus repo
 
 dependencies:
 - base >= 4.7 && < 5
+- scotty
+- yaml
 
 library:
   source-dirs: src
@@ -35,6 +37,8 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - ursus-maritimus
+    - scotty
+    - yaml
 
 tests:
   ursus-maritimus-test:
@@ -46,3 +50,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - ursus-maritimus
+    - scotty
+    - yaml
