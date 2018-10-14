@@ -23,6 +23,7 @@ dependencies:
 - base >= 4.7 && < 5
 - scotty
 - yaml
+- directory
 
 library:
   source-dirs: src
@@ -39,6 +40,7 @@ executables:
     - ursus-maritimus
     - scotty
     - yaml
+    - directory
 
 tests:
   ursus-maritimus-test:

@@ -7,11 +7,9 @@ import AppConfig
 
 httpService :: IO ()
 httpService = do
-  conf <- loadConfig
-  let p = case conf of 
-            Left x -> 3000
-            Right conf -> port $ getServerConfig conf
-  scotty p $ root >> eventsRoute
+  conf <- loadConfig 
+  let port' = either (const 3000) (port . getServerConfig) conf
+  scotty port' $ root >> eventsRoute
   return () 
   
 eventsRoute :: ScottyM ()  

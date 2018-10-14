@@ -11,6 +11,8 @@ module AppConfig (loadConfig
 
 import Data.Yaml
 import GHC.Generics
+import Control.Monad
+import System.Directory
 
 data Config = Config { getStorage :: EventStorageConfig
                      , getServerConfig :: HttpServerConfig 
@@ -34,4 +36,7 @@ instance FromJSON EventStorageConfig
 instance FromJSON HttpServerConfig
 
 loadConfig :: IO (Either ParseException Config)
-loadConfig = decodeFileEither "configuration.yaml"
+loadConfig = getCurrentDirectory >>= (addPath >=> decodeFileEither)
+
+addPath :: String -> IO String 
+addPath = return . (++ "/resources/configuration.yaml")
