@@ -24,6 +24,8 @@ dependencies:
 - scotty
 - yaml
 - directory
+- pipes
+- pipes-concurrency
 
 library:
   source-dirs: src
@@ -41,6 +43,8 @@ executables:
     - scotty
     - yaml
     - directory
+    - pipes
+    - pipes-concurrency
 
 tests:
   ursus-maritimus-test:
@@ -54,3 +58,5 @@ tests:
     - ursus-maritimus
     - scotty
     - yaml
+    - pipes
+    - pipes-concurrency
