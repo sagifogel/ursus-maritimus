@@ -26,6 +26,8 @@ dependencies:
 - directory
 - pipes
 - pipes-concurrency
+- dlist
+- containers
 
 library:
   source-dirs: src
@@ -45,6 +47,8 @@ executables:
     - directory
     - pipes
     - pipes-concurrency
+    - dlist
+    - containers
 
 tests:
   ursus-maritimus-test:
@@ -60,3 +64,4 @@ tests:
     - yaml
     - pipes
     - pipes-concurrency
+    - dlist

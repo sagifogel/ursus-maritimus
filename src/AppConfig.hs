@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module AppConfig (loadConfig
+module AppConfig ( loadConfig
                  , ip        
                  , port
                  , getServerConfig
@@ -31,7 +31,7 @@ instance FromJSON Config where
       <$> v .: "eventStorage" 
       <*> v .: "httpServer"
 
-instance FromJSON EventStorageConfig 
+instance FromJSON EventStorageConfig
                     
 instance FromJSON HttpServerConfig
 
