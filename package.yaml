@@ -28,6 +28,8 @@ dependencies:
 - pipes-concurrency
 - dlist
 - containers
+- text
+- mtl
 
 library:
   source-dirs: src
@@ -49,6 +51,8 @@ executables:
     - pipes-concurrency
     - dlist
     - containers
+    - text
+    - mtl
 
 tests:
   ursus-maritimus-test:
@@ -65,3 +69,4 @@ tests:
     - pipes
     - pipes-concurrency
     - dlist
+    - text

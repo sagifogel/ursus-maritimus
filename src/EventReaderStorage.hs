@@ -1,6 +1,9 @@
 {-# LANGUAGE InstanceSigs #-}
 
-module EventReaderStorage ( getEventCountByType
+module EventReaderStorage ( create,
+                            ReaderStorage,
+                            EventReaderStorage,
+                            getEventCountByType
                           , getEventCountByData ) where
 
 import Events

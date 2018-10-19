@@ -14,8 +14,8 @@ data Event = Event { _data :: String
 instance FromJSON Event 
                     
 instance ToJSON Event where         
-  toJSON (Event eventType value timestamp) = 
-    object ["eventType" .= eventType,
-            "_data" .= data_, 
+  toJSON (Event eventType _data timestamp) = 
+    object ["data" .= _data,
+            "eventType" .= eventType, 
             "timestamp" .= timestamp]
                    
