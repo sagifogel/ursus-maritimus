@@ -14,3 +14,6 @@ main = getArgs >>=
             (dataGen:_) -> do 
                   readerStorage <- create
                   stream dataGen >>= maybe (return ()) (const $ httpService readerStorage)
+
+bootstrapStream :: IO ()
+bootstrapStream = undefined

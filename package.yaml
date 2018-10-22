@@ -30,6 +30,7 @@ dependencies:
 - containers
 - text
 - mtl
+- process-streaming
 
 library:
   source-dirs: src
@@ -53,6 +54,7 @@ executables:
     - containers
     - text
     - mtl
+    - process-streaming
 
 tests:
   ursus-maritimus-test:
@@ -70,3 +72,4 @@ tests:
     - pipes-concurrency
     - dlist
     - text
+    - process-streaming
