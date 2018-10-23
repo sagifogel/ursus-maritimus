@@ -31,6 +31,11 @@ dependencies:
 - text
 - mtl
 - process-streaming
+- bytestring
+- exceptions
+- pipes-safe
+- process
+- stm
 
 library:
   source-dirs: src
@@ -55,6 +60,11 @@ executables:
     - text
     - mtl
     - process-streaming
+    - bytestring
+    - exceptions
+    - pipes-safe
+    - process
+    - stm
 
 tests:
   ursus-maritimus-test:
