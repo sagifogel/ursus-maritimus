@@ -2,6 +2,8 @@ module Main where
 
 import Data.Maybe
 import StreamRunner
+import Control.Monad
+import System.Process
 import EventsHttpServer
 import EventReaderStorage
 import System.Environment
@@ -14,6 +16,3 @@ main = getArgs >>=
             (dataGen:_) -> do 
                   readerStorage <- create
                   stream dataGen >>= maybe (return ()) (const $ httpService readerStorage)
-
-bootstrapStream :: IO ()
-bootstrapStream = undefined

@@ -7,6 +7,7 @@ module AppConfig ( loadConfig
                  , getServerConfig
                  , maxQueuedReaderElements
                  , maxQueuedWriterElements
+                 , EventStorageConfig
                  ) where
 
 import Data.Yaml

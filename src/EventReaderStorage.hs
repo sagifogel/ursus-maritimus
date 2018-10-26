@@ -1,7 +1,7 @@
 {-# LANGUAGE InstanceSigs #-}
 
 module EventReaderStorage ( create,
-                            ReaderStorage,
+                            ReaderStorage(..),
                             EventReaderStorage,
                             getEventCountByType
                           , getEventCountByData ) where

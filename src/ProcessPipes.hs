@@ -1,4 +1,5 @@
 {- copied from pipes-process repo @https://github.com/stepcut/pipes-process -}
+
 {-# LANGUAGE RankNTypes, FlexibleContexts, TypeFamilies #-}
 
 module ProcessPipes ( PipesProcess
@@ -24,11 +25,10 @@ import Data.ByteString.Lazy.Internal (defaultChunkSize)
 import Control.Concurrent.STM.TMVar (TMVar, newEmptyTMVar, putTMVar, takeTMVar)
 import System.Process (StdStream(..), CreateProcess(..), ProcessHandle(..), createProcess, waitForProcess, terminateProcess, getProcessExitCode)
 
-data PipesProcess = PipesProcess { action         :: TMVar OutAction
-                                 , input          :: TMVar InAction
-                                 , processHandle  :: ProcessHandle
-                                 , tids           :: [ThreadId]
-                                 }
+data PipesProcess = PipesProcess { action :: TMVar OutAction
+                                 , input :: TMVar InAction
+                                 , processHandle :: ProcessHandle
+                                 , tids :: [ThreadId] }
 
 data OutAction
     = Stdout ByteString

@@ -1,0 +1,1 @@
+/mnt/c/haskell/dataGen/.stack-work/install/x86_64-linux/lts-12.14/8.4.3/bin/dataGen-exe"

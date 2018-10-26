@@ -1,6 +1,8 @@
 {-# LANGUAGE InstanceSigs #-}
 
-module EventWriterStorage (get) where
+module EventWriterStorage ( get
+                          , WriterStorage
+                          , EventWriterStorage) where
 
 import Events
 import Data.DList
