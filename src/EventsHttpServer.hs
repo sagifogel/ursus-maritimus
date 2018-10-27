@@ -11,11 +11,9 @@ import EventReaderStorage
 import Control.Monad.Trans
 import qualified Data.Text.Lazy as T
 
-httpService :: ReaderStorage -> IO ()
-httpService readerStorage = do
-  conf <- loadConfig 
-  let port' = either (const 3000) (port . getServerConfig) conf
-  scotty port' $ root >> eventsByTypeRoute readerStorage >> eventsByDataRoute readerStorage
+httpService :: HttpServerConfig -> ReaderStorage -> IO ()
+httpService httpConfig readerStorage = do
+  scotty (port httpConfig) $ root >> eventsByTypeRoute readerStorage >> eventsByDataRoute readerStorage
   return ()
   
 root :: ScottyM ()  

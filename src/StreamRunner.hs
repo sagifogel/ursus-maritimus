@@ -6,9 +6,10 @@ import AppConfig
 import Text.Printf
 import System.Directory
 import EventsHttpServer
+import qualified EventStreamApp
+import Control.Concurrent.Async
 import qualified EventWriterStorage
 import qualified EventReaderStorage
-import qualified EventStreamApp
 
 stream :: [String] -> IO ()
 stream args = 
@@ -29,10 +30,13 @@ bootstrapStream dataGen = do
   let config = either (const defaultConfig) id loadedConfig
   let eventWriter = EventWriterStorage.create
   let storageConfig = getStorageConfig config
-  
+  let httpConfig = getServerConfig config
+
   eventReader <- EventReaderStorage.create
-  httpService eventReader
-  EventStreamApp.run dataGen storageConfig eventReader eventWriter
+  http <- async $ httpService httpConfig eventReader
+  app <- async $ EventStreamApp.run dataGen storageConfig eventReader eventWriter
+  waitBoth app http
+  return ()
 
 defaultConfig :: Config
 defaultConfig = Config (HttpServerConfig "0.0.0.0" 8080) (EventStorageConfig 2048 240)  

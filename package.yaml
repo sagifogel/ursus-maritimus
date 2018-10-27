@@ -37,6 +37,7 @@ dependencies:
 - process
 - stm
 - pipes-bytestring
+- async
 
 library:
   source-dirs: src
@@ -67,6 +68,7 @@ executables:
     - process
     - stm
     - pipes-bytestring
+    - async
 
 tests:
   ursus-maritimus-test:
