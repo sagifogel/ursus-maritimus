@@ -1,10 +1,10 @@
 {-# LANGUAGE InstanceSigs #-}
 
-module EventReaderStorage ( create,
-                            ReaderStorage(..),
-                            EventReaderStorage,
-                            getEventCountByType
-                          , getEventCountByData ) where
+module EventReaderStorage ( create
+                          , ReaderStorage
+                          , EventReaderStorage
+                          , getEventCountByType
+                          , getEventCountByData) where
 
 import Events
 import Data.IORef

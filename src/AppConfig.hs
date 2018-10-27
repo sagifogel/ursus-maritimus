@@ -2,12 +2,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module AppConfig ( loadConfig
-                 , ip        
-                 , port
-                 , getServerConfig
-                 , maxQueuedReaderElements
-                 , maxQueuedWriterElements
-                 , EventStorageConfig
+                 , Config(..)
+                 , HttpServerConfig(..)
+                 , EventStorageConfig(..)
                  ) where
 
 import Data.Yaml
@@ -15,8 +12,8 @@ import GHC.Generics
 import Control.Monad
 import System.Directory
 
-data Config = Config { getStorage :: EventStorageConfig
-                     , getServerConfig :: HttpServerConfig 
+data Config = Config { getServerConfig :: HttpServerConfig
+                     , getStorageConfig :: EventStorageConfig 
                      } deriving Show
 
 data EventStorageConfig = EventStorageConfig { maxQueuedReaderElements :: Int

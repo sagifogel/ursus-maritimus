@@ -26,8 +26,8 @@ data EventStorage = EventStorage { eventStorageConfig :: EventStorageConfig
                                  , eventWriterStorage :: WriterStorage
                                  , eventReaderStorage :: ReaderStorage }
 
-run :: FilePath -> IO ()
-run = runPipe . handle
+run :: FilePath -> EventStorageConfig -> ReaderStorage -> WriterStorage -> IO ()
+run path eventStorageConfig eventReaderStorage eventWriterStorage = runPipe (handle path)
 
 runPipe :: IO Handle -> IO ()
 runPipe = (ap (finally . runEffect' . fromHandle) hClose =<<)

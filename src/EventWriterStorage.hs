@@ -1,6 +1,8 @@
 {-# LANGUAGE InstanceSigs #-}
 
 module EventWriterStorage ( get
+                          , put
+                          , create
                           , WriterStorage
                           , EventWriterStorage) where
 
@@ -8,6 +10,9 @@ import Events
 import Data.DList
 
 newtype WriterStorage = WriterStorage { getStorage :: DList Event }
+
+create :: WriterStorage
+create = WriterStorage $ fromList [] 
 
 class EventWriterStorage s where
   get :: s -> [Event]
