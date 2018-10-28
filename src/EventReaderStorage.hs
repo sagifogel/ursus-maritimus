@@ -1,10 +1,11 @@
 {-# LANGUAGE InstanceSigs #-}
 
-module EventReaderStorage ( create
+module EventReaderStorage ( put
+                          , create
                           , ReaderStorage
-                          , EventReaderStorage
                           , getEventCountByType
-                          , getEventCountByData) where
+                          , getEventCountByData
+                          ) where
 
 import Events
 import Data.IORef
@@ -42,6 +43,4 @@ updateMap map key = foldr (\_ map' -> Map.adjust (+1) key map') map lookup
                     where lookup = Map.lookup key map 
 
 pick :: ReaderStorage -> (EventState -> Map.Map String Int) -> IO (Map.Map String Int)
-pick (ReaderStorage state) f = do 
-  events <- readIORef state
-  return $ f events
+pick (ReaderStorage ref) f = f <$> readIORef ref

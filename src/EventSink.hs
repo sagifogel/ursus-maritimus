@@ -1,4 +1,6 @@
-module EventSink where
+module EventSink ( writeStorageSink
+                 , readStorageSink
+                 ) where
 
 import Pipes
 import ProcessPipes

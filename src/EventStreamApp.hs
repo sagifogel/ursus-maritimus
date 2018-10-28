@@ -2,54 +2,60 @@
 {-# LANGUAGE OverloadedStrings #-}                   
 
 module EventStreamApp ( run 
-                      , EventStorage(..)) where 
+                      , EventStorage(..)
+                      ) where 
 
 import Pipes
 import Events    
 import EventSink
 import System.IO
+import Data.Yaml
 import AppConfig
 import Data.Maybe
 import System.Process
 import Pipes.ByteString
-import EventWriterStorage
-import EventReaderStorage
 import GHC.IO.Handle.Text
 import EventReaderStorage
+import EventWriterStorage
 import Data.ByteString (ByteString)
 import qualified GHC.IO.Exception as G
 import Control.Monad (unless, (=<<), ap)
+import qualified EventReaderStorage as RS
+import qualified EventWriterStorage as WS
 import Control.Exception (try, throwIO, finally)
-import qualified Data.ByteString.Char8 as BS (unpack)
+import qualified Data.ByteString.Char8 as B (unpack)
 
 data EventStorage = EventStorage { eventStorageConfig :: EventStorageConfig
                                  , eventWriterStorage :: WriterStorage
                                  , eventReaderStorage :: ReaderStorage }
 
 run :: FilePath -> EventStorageConfig -> ReaderStorage -> WriterStorage -> IO ()
-run path eventStorageConfig eventReaderStorage eventWriterStorage = do 
-  runPipe (handle path)
-  putStrLn $ "Path -> " ++ path
+run path config readerStore writerStore = do
+                              handle <- handle path 
+                              runPipe handle readerStore writerStore
+  
+runPipe :: Handle -> ReaderStorage -> WriterStorage -> IO ()
+runPipe handle readerStore writerStore = 
+  finally (runEffect' readerStore writerStore (fromHandle handle)) (hClose handle) 
 
-runPipe :: IO Handle -> IO ()
-runPipe = (ap (finally . runEffect' . fromHandle) hClose =<<)
-
-runEffect' :: Proxy X () () ByteString IO () -> IO ()
-runEffect' = runEffect . (>-> stdoutLn)
+runEffect' :: ReaderStorage -> WriterStorage -> Proxy X () () ByteString IO () -> IO ()
+runEffect' readerStore writerStore = runEffect . (>-> (stdoutLn readerStore writerStore))
 
 handle :: FilePath -> IO Handle  
 handle path = do
   (_, mOut, _, _) <- createProcess $ (exProc path) { std_out = CreatePipe }
   return $ maybe (error "invalid handle") id mOut
 
-stdoutLn :: Consumer' ByteString IO ()
-stdoutLn = do
-  str <- await 
-  x   <- lift $ try $ putStr $ BS.unpack str
-  case x of
-    Right () -> stdoutLn  
-    Left e@(G.IOError { G.ioe_type = t}) ->
-        lift $ unless (t == G.ResourceVanished) $ throwIO e
+stdoutLn :: ReaderStorage -> WriterStorage -> Consumer' ByteString IO ()
+stdoutLn readerStore writerStore = do
+  byteStr <- await 
+  let eitherEvent = (decodeEither' byteStr :: Either ParseException Event)
+  case eitherEvent of
+    Right event -> do
+      lift $ RS.put readerStore event
+      lift $ WS.put writerStore event
+      stdoutLn readerStore writerStore
+    Left parseEx -> stdoutLn readerStore writerStore
          
 exProc :: FilePath -> CreateProcess
 exProc = flip proc []

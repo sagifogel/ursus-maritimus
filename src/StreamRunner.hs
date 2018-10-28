@@ -28,10 +28,10 @@ bootstrapStream :: String -> IO ()
 bootstrapStream dataGen = do
   loadedConfig <- loadConfig
   let config = either (const defaultConfig) id loadedConfig
-  let eventWriter = EventWriterStorage.create
   let storageConfig = getStorageConfig config
   let httpConfig = getServerConfig config
 
+  eventWriter <- EventWriterStorage.create
   eventReader <- EventReaderStorage.create
   http <- async $ httpService httpConfig eventReader
   app <- async $ EventStreamApp.run dataGen storageConfig eventReader eventWriter
