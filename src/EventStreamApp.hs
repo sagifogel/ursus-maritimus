@@ -39,23 +39,23 @@ runPipe handle readerStore writerStore =
   finally (runEffect' readerStore writerStore (fromHandle handle)) (hClose handle) 
 
 runEffect' :: ReaderStorage -> WriterStorage -> Proxy X () () ByteString IO () -> IO ()
-runEffect' readerStore writerStore = runEffect . (>-> (stdoutLn readerStore writerStore))
+runEffect' readerStore writerStore = runEffect . (>-> (consume readerStore writerStore))
 
 handle :: FilePath -> IO Handle  
 handle path = do
   (_, mOut, _, _) <- createProcess $ (exProc path) { std_out = CreatePipe }
   return $ maybe (error "invalid handle") id mOut
 
-stdoutLn :: ReaderStorage -> WriterStorage -> Consumer' ByteString IO ()
-stdoutLn readerStore writerStore = do
+consume :: ReaderStorage -> WriterStorage -> Consumer' ByteString IO ()
+consume readerStore writerStore = do
   byteStr <- await 
-  let eitherEvent = (decodeEither' byteStr :: Either ParseException Event)
+  let eitherEvent = decodeEither' byteStr
   case eitherEvent of
     Right event -> do
       lift $ RS.put readerStore event
       lift $ WS.put writerStore event
-      stdoutLn readerStore writerStore
-    Left parseEx -> stdoutLn readerStore writerStore
+      consume readerStore writerStore
+    Left _ -> consume readerStore writerStore
          
 exProc :: FilePath -> CreateProcess
 exProc = flip proc []

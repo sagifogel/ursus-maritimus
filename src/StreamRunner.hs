@@ -6,10 +6,10 @@ import AppConfig
 import Text.Printf
 import System.Directory
 import EventsHttpServer
-import qualified EventStreamApp
 import Control.Concurrent.Async
 import qualified EventWriterStorage
 import qualified EventReaderStorage
+import qualified EventStreamApp as App
 
 stream :: [String] -> IO ()
 stream args = 
@@ -34,7 +34,7 @@ bootstrapStream dataGen = do
   eventWriter <- EventWriterStorage.create
   eventReader <- EventReaderStorage.create
   http <- async $ httpService httpConfig eventReader
-  app <- async $ EventStreamApp.run dataGen storageConfig eventReader eventWriter
+  app <- async $ App.run dataGen storageConfig eventReader eventWriter
   waitBoth app http
   return ()
 
