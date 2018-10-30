@@ -2,14 +2,19 @@
 
 module StreamRunner (stream)  where
 
+import Pipes
 import AppConfig
 import Text.Printf
+import GHC.IO.Handle
+import EventStreamApp
 import System.Directory
 import EventsHttpServer
 import Control.Concurrent.Async
+import Data.ByteString (ByteString)
 import qualified EventWriterStorage
 import qualified EventReaderStorage
 import qualified EventStreamApp as App
+import Control.Exception (try, throwIO, finally)
 
 stream :: [String] -> IO ()
 stream args = 
@@ -34,10 +39,14 @@ bootstrapStream dataGen = do
   eventWriter <- EventWriterStorage.create
   eventReader <- EventReaderStorage.create
   http <- async $ httpService httpConfig eventReader
-  app <- async $ App.run dataGen storageConfig eventReader eventWriter
+  app <- async $ runEffect' $ App.run dataGen (EventStorage storageConfig eventWriter eventReader)
   waitBoth app http
   return ()
 
-defaultConfig :: Config
-defaultConfig = Config (HttpServerConfig "0.0.0.0" 8080) (EventStorageConfig 2048 240)  
+runEffect' :: IO (Handle, Effect IO ()) -> IO ()
+runEffect' io = do 
+  (handle, consumer) <- io 
+  finally (runEffect consumer) (hClose handle)
 
+defaultConfig :: Config
+defaultConfig = Config (HttpServerConfig "0.0.0.0" 8080) (EventStorageConfig 2048 240)
