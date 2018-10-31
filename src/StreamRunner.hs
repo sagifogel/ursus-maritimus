@@ -39,14 +39,9 @@ bootstrapStream dataGen = do
   eventWriter <- EventWriterStorage.create
   eventReader <- EventReaderStorage.create
   http <- async $ httpService httpConfig eventReader
-  app <- async $ runEffect' $ App.run dataGen (EventStorage storageConfig eventWriter eventReader)
+  app <- async $ App.run dataGen (EventStorage storageConfig eventWriter eventReader)
   waitBoth app http
-  return ()
-
-runEffect' :: IO (Handle, Effect IO ()) -> IO ()
-runEffect' io = do 
-  (handle, consumer) <- io 
-  finally (runEffect consumer) (hClose handle)
+  wait app
 
 defaultConfig :: Config
 defaultConfig = Config (HttpServerConfig "0.0.0.0" 8080) (EventStorageConfig 2048 240)

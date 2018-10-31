@@ -18,47 +18,50 @@ import GHC.IO.Handle.Text
 import EventReaderStorage
 import EventWriterStorage
 import Data.ByteString (ByteString)
-import Control.Monad (unless, (=<<), ap)
+import qualified Pipes.Prelude as PP
+import Control.Monad (unless, (=<<), ap, forever)
 import qualified EventReaderStorage as RS
 import qualified EventWriterStorage as WS
 import Control.Exception (try, throwIO, finally)
-import qualified Data.ByteString.Char8 as B (unpack)
-
-import Data.Map as Map
-import Data.String
+import qualified Data.ByteString.Char8 as B (unpack, putStrLn)
 
 data EventStorage = EventStorage { eventStorageConfig :: EventStorageConfig
                                  , eventWriterStorage :: WriterStorage
                                  , eventReaderStorage :: ReaderStorage }
 
-run :: FilePath -> EventStorage -> IO (Handle, Effect IO ())
+run :: FilePath -> EventStorage -> IO ()
 run path eventStorage = do
-  handle <- handle path
-  let pipe = runPipe handle (eventReaderStorage eventStorage) (eventWriterStorage eventStorage)
-  return (handle, pipe)
+  let reader = eventReaderStorage eventStorage
+  let writer = eventWriterStorage eventStorage
 
-runPipe :: Handle -> ReaderStorage -> WriterStorage -> Effect IO ()
-runPipe handle readerStore writerStore = 
-  (fromHandle handle) >-> compose readerStore writerStore
+  handle <- processHandle path
+  finally (runEffect $ effect handle reader writer) (hClose handle)
 
-compose :: ReaderStorage -> WriterStorage -> Consumer ByteString IO ()
-compose readerStore writerStore = 
-  consume >~ collect >~ do 
-      writeStorageSink writerStore
-      readStorageSink readerStore
+effect :: Handle -> ReaderStorage -> WriterStorage -> Effect IO ()
+effect handle readerStore writerStore = 
+  producer handle >-> consumer readerStore writerStore
 
+producer :: Handle -> Producer ByteString IO ()
+producer = fromHandle
+
+consumer :: ReaderStorage -> WriterStorage -> Consumer ByteString IO () 
+consumer readerStore writerStore =
+  forever $ consume >~ collect >~ do
+    writeStorageSink writerStore
+    readStorageSink readerStore
+    
 consume :: Consumer ByteString IO (Either ParseException Event)
 consume = do 
   byteStr <- await
-  return $ decodeEither' byteStr 
+  lift $ return (decodeEither' byteStr :: Either ParseException Event)
 
 collect :: Consumer (Either ParseException Event) IO (Maybe Event)
 collect = do 
   parsedEvent <- await
-  return $ either (const Nothing) Just parsedEvent
-
-handle :: FilePath -> IO Handle  
-handle path = do
+  lift $ return $ either (const Nothing) Just parsedEvent
+  
+processHandle :: FilePath -> IO Handle  
+processHandle path = do
   (_, mOut, _, _) <- createProcess $ (exProc path) { std_out = CreatePipe }
   return $ maybe (error "invalid handle") id mOut
          
