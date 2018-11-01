@@ -21,5 +21,5 @@ readStorageSink readStorage = putInStorage (RS.put readStorage)
 
 putInStorage :: (Event -> IO ()) -> Consumer (Maybe Event) IO ()
 putInStorage f = do
-  maybeEvent <- await 
+  maybeEvent <- await
   lift $ maybe (return ()) f maybeEvent

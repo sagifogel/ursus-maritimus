@@ -31,7 +31,7 @@ class EventReaderStorage s where
 instance EventReaderStorage ReaderStorage where
   getEventCountByData ref = pick ref (eventsByData)
   getEventCountByType ref = pick ref (eventsByType)   
-  put (ReaderStorage ref) ev = modifyIORef ref (updateEventState ev)
+  put (ReaderStorage ref) event = modifyIORef' ref (updateEventState event)
 
 updateEventState :: Event -> EventState -> EventState
 updateEventState ev events = EventState typedEvents dataEvents
@@ -39,8 +39,7 @@ updateEventState ev events = EventState typedEvents dataEvents
         dataEvents = updateMap (eventsByData events) (_data ev) :: DataEvents
 
 updateMap :: Map.Map String Int -> String -> Map.Map String Int
-updateMap map key = foldr (\_ map' -> Map.adjust (+1) key map') map lookup         
-                    where lookup = Map.lookup key map 
+updateMap map key = Map.insertWith (+) key 1 map  
 
 pick :: ReaderStorage -> (EventState -> Map.Map String Int) -> IO (Map.Map String Int)
 pick (ReaderStorage ref) f = f <$> readIORef ref

@@ -23,7 +23,6 @@ import Control.Monad (unless, (=<<), ap, forever)
 import qualified EventReaderStorage as RS
 import qualified EventWriterStorage as WS
 import Control.Exception (try, throwIO, finally)
-import qualified Data.ByteString.Char8 as B (unpack, putStrLn)
 
 data EventStorage = EventStorage { eventStorageConfig :: EventStorageConfig
                                  , eventWriterStorage :: WriterStorage

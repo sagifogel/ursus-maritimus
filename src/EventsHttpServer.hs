@@ -22,11 +22,11 @@ root = get "/" $ do
 
 eventsByTypeRoute :: ReaderStorage -> ScottyM ()
 eventsByTypeRoute readerStorage = get "/eventsbytype" $ do
-  serveEvents (getEventCountByType readerStorage) "Event type: %s, Count: %s"
+  serveEvents (getEventCountByType readerStorage) "Event type: %s, Count: %s<br/>"
 
 eventsByDataRoute :: ReaderStorage -> ScottyM ()
 eventsByDataRoute readerStorage = get "/eventsbydata" $ do
-  serveEvents (getEventCountByData readerStorage) "Event data: %s, Count: %s"
+  serveEvents (getEventCountByData readerStorage) "Event data: %s, Count: %s<br/>"
 
 serveEvents :: IO (Map String Int) -> String -> ActionM ()
 serveEvents events fmt = do
@@ -34,4 +34,4 @@ serveEvents events fmt = do
   html $ T.pack text
 
 foldEvents :: String -> Map String Int -> String
-foldEvents fmt = foldrWithKey (\k v acc -> printf fmt k (show v)) ""
+foldEvents fmt = foldrWithKey (\k v acc -> acc ++ printf fmt k (show v)) ""
