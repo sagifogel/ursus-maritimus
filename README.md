@@ -66,10 +66,7 @@ visible to the user under the HTTP endpoint.
 
 ### How to run the application:
 
-<<<<<<< HEAD
 - stack build  
-=======
->>>>>>> master
 - stack exec ursus-maritimus-exe [path to data generator]
     
 ### Querying the data API
