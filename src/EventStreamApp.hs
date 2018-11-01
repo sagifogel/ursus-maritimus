@@ -14,18 +14,15 @@ import AppConfig
 import Data.Maybe
 import System.Process
 import Pipes.ByteString
-import GHC.IO.Handle.Text
 import EventReaderStorage
 import EventWriterStorage
+import Control.Monad (forever)
+import Control.Exception (finally)
 import Data.ByteString (ByteString)
-import qualified Pipes.Prelude as PP
-import Control.Monad (unless, (=<<), ap, forever)
 import qualified EventReaderStorage as RS
 import qualified EventWriterStorage as WS
-import Control.Exception (try, throwIO, finally)
 
-data EventStorage = EventStorage { eventStorageConfig :: EventStorageConfig
-                                 , eventWriterStorage :: WriterStorage
+data EventStorage = EventStorage { eventWriterStorage :: WriterStorage
                                  , eventReaderStorage :: ReaderStorage }
 
 run :: FilePath -> EventStorage -> IO ()

@@ -4,7 +4,6 @@
 module AppConfig ( loadConfig
                  , Config(..)
                  , HttpServerConfig(..)
-                 , EventStorageConfig(..)
                  ) where
 
 import Data.Yaml
@@ -12,25 +11,13 @@ import GHC.Generics
 import Control.Monad
 import System.Directory
 
-data Config = Config { getServerConfig :: HttpServerConfig
-                     , getStorageConfig :: EventStorageConfig 
-                     } deriving Show
-
-data EventStorageConfig = EventStorageConfig { maxQueuedReaderElements :: Int
-                                             , maxQueuedWriterElements :: Int
-                                             } deriving (Show, Generic)
-
-data HttpServerConfig = HttpServerConfig { ip :: String
-                                         , port :: Int
-                                         } deriving (Show, Generic)
+newtype Config = Config { getServerConfig :: HttpServerConfig } deriving Show
+newtype HttpServerConfig = HttpServerConfig { port :: Int } deriving (Show, Generic)
 
 instance FromJSON Config where
-  parseJSON (Object v) = Config 
-      <$> v .: "eventStorage" 
-      <*> v .: "httpServer"
+  parseJSON (Object v) = Config
+      <$> v .: "httpServer"
 
-instance FromJSON EventStorageConfig
-                    
 instance FromJSON HttpServerConfig
 
 loadConfig :: IO (Either ParseException Config)

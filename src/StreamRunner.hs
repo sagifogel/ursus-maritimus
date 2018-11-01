@@ -5,7 +5,6 @@ module StreamRunner (stream)  where
 import Pipes
 import AppConfig
 import Text.Printf
-import GHC.IO.Handle
 import EventStreamApp
 import System.Directory
 import EventsHttpServer
@@ -14,7 +13,6 @@ import Data.ByteString (ByteString)
 import qualified EventWriterStorage
 import qualified EventReaderStorage
 import qualified EventStreamApp as App
-import Control.Exception (try, throwIO, finally)
 
 stream :: [String] -> IO ()
 stream args = 
@@ -33,15 +31,14 @@ bootstrapStream :: String -> IO ()
 bootstrapStream dataGen = do
   loadedConfig <- loadConfig
   let config = either (const defaultConfig) id loadedConfig
-  let storageConfig = getStorageConfig config
   let httpConfig = getServerConfig config
 
   eventWriter <- EventWriterStorage.create
   eventReader <- EventReaderStorage.create
   http <- async $ httpService httpConfig eventReader
-  app <- async $ App.run dataGen (EventStorage storageConfig eventWriter eventReader)
+  app <- async $ App.run dataGen (EventStorage eventWriter eventReader)
   waitBoth app http
   wait app
 
 defaultConfig :: Config
-defaultConfig = Config (HttpServerConfig "0.0.0.0" 8080) (EventStorageConfig 2048 240)
+defaultConfig = Config (HttpServerConfig 8080)

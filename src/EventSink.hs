@@ -6,7 +6,6 @@ module EventSink ( writeStorageSink
 
 import Pipes
 import Events
-import ProcessPipes
 import EventWriterStorage
 import EventReaderStorage
 import Data.ByteString (ByteString)

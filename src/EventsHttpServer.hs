@@ -13,7 +13,9 @@ import qualified Data.Text.Lazy as T
 
 httpService :: HttpServerConfig -> ReaderStorage -> IO ()
 httpService httpConfig readerStorage = do
-  scotty (port httpConfig) $ root >> eventsByTypeRoute readerStorage >> eventsByDataRoute readerStorage
+  scotty (port httpConfig) $ root >> 
+    eventsByTypeRoute readerStorage >> 
+    eventsByDataRoute readerStorage
   return ()
   
 root :: ScottyM ()  
