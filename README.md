@@ -66,14 +66,14 @@ visible to the user under the HTTP endpoint.
 
 ### How to run the application:
 
-- stack build  
+- stack build
 - stack exec ursus-maritimus-exe [path to data generator]
     
 ### Querying the data API
 
 After running the service, the process starts an HTTP service which by default binds 
 to "0.0.0.0:8080". If you'd like to change the port, this can be configured via 
-the **application.conf**, and a restart to the service.
+the **configuration.yaml**, and a restart to the service.
 
 #### Endpoints exposed:
 
