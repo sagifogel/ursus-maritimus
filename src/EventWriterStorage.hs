@@ -18,10 +18,11 @@ create = do
   ref <- newIORef $ fromList []
   return $ WriterStorage ref
 
-class EventWriterStorage s where
+class EventsStorage s => EventWriterStorage s where
   get :: s -> IO [Event]
-  put :: s -> Event -> IO ()
   
+instance EventsStorage WriterStorage where
+  put (WriterStorage ref) ev = modifyIORef ref (flip snoc ev)  
+
 instance EventWriterStorage WriterStorage where
   get (WriterStorage ref) = toList <$> readIORef ref
-  put (WriterStorage ref) ev = modifyIORef ref (flip snoc ev)  

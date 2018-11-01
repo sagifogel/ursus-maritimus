@@ -23,15 +23,16 @@ create =  do
   ref <- newIORef (EventState empty empty)
   return $ ReaderStorage ref
 
-class EventReaderStorage s where
-  put :: s -> Event -> IO ()
+class EventsStorage s => EventReaderStorage s where
   getEventCountByType :: s -> IO (Map String Int)
   getEventCountByData :: s -> IO (Map String Int)
+
+instance EventsStorage ReaderStorage where
+  put (ReaderStorage ref) event = modifyIORef' ref (updateEventState event)
 
 instance EventReaderStorage ReaderStorage where
   getEventCountByData ref = pick ref (eventsByData)
   getEventCountByType ref = pick ref (eventsByType)   
-  put (ReaderStorage ref) event = modifyIORef' ref (updateEventState event)
 
 updateEventState :: Event -> EventState -> EventState
 updateEventState ev events = EventState typedEvents dataEvents

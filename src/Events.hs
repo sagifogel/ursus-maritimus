@@ -1,6 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}                   
 
-module Events (Event(..)) where
+module Events ( Event(..)
+              , EventsStorage(..)
+              ) where
 
 import Data.Yaml
 import GHC.Generics
@@ -21,4 +23,7 @@ instance ToJSON Event where
     object ["data" .= _data,
             "eventType" .= eventType, 
             "timestamp" .= timestamp]
+
+class EventsStorage s where
+  put :: s -> Event -> IO ()         
                    
