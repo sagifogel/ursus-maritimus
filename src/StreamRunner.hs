@@ -22,10 +22,9 @@ stream args =
     (dataGen: _) -> do
       doesFileExist dataGen >>= \exists ->
         if exists then bootstrapStream dataGen
-        else do 
+        else 
           putStrLn $ printf "Data generator path \"%s\" is invalid.\n\ 
              \Please make sure the file exists at the specified location." dataGen
-          return ()
 
 bootstrapStream :: String -> IO ()          
 bootstrapStream dataGen = do
@@ -37,8 +36,7 @@ bootstrapStream dataGen = do
   eventReader <- EventReaderStorage.create
   http <- async $ httpService httpConfig eventReader
   app <- async $ App.run dataGen (EventStorage eventWriter eventReader)
-  waitBoth app http
-  wait app
+  waitBoth app http >> return ()
 
 defaultConfig :: Config
 defaultConfig = Config (HttpServerConfig 8080)

@@ -49,7 +49,7 @@ consumer readerStore writerStore =
 consume :: Consumer ByteString IO (Either ParseException Event)
 consume = do 
   byteStr <- await
-  lift $ return (decodeEither' byteStr :: Either ParseException Event)
+  lift $ return $ decodeEither' byteStr
 
 collect :: Consumer (Either ParseException Event) IO (Maybe Event)
 collect = do 

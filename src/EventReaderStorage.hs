@@ -31,8 +31,8 @@ instance EventsStorage ReaderStorage where
   put (ReaderStorage ref) event = modifyIORef' ref (updateEventState event)
 
 instance EventReaderStorage ReaderStorage where
-  getEventCountByData ref = pick ref (eventsByData)
-  getEventCountByType ref = pick ref (eventsByType)   
+  getEventCountByData ref = pick ref eventsByData
+  getEventCountByType ref = pick ref eventsByType   
 
 updateEventState :: Event -> EventState -> EventState
 updateEventState ev events = EventState typedEvents dataEvents

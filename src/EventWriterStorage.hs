@@ -25,4 +25,4 @@ instance EventsStorage WriterStorage where
   put (WriterStorage ref) ev = modifyIORef ref (flip snoc ev)  
 
 instance EventWriterStorage WriterStorage where
-  get (WriterStorage ref) = toList <$> readIORef ref
+  get = (toList <$>) . readIORef . getStorage
